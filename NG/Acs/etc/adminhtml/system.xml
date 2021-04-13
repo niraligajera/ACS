@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="ACS" translate="label" sortOrder="60">
+            <label>MY CUSTOM MODULES</label>
+        </tab>
+        <section id="ACSmodule" translate="label" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>ACS module</label>
+            <tab>ACS</tab>
+            <resource>Mageplaza_HelloWorld::helloworld_config</resource>
+               <group id="acs1" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>ACS</label>
+                  <field id="company_name" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Name</label>					
+                </field>
+                <field id="company_id" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Id</label>
+					<comment>E.g. :123456</comment>
+                </field>
+				
+				<field id="company_pass" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Password</label>
+					<comment>E.g. : 456789m</comment>
+                </field>
+                <field id="user_id" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>User Id</label>
+					<comment>E.g. : 456789m</comment>
+                </field>
+                <field id="user_pass" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>User Password</label>
+					<comment>E.g. : ******</comment>
+                </field>
+
+				<field id="bill_code" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Billing Code</label>
+					<comment>only add code no text</comment>
+                </field>
+				<field id="api_key" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Key</label>
+					<comment>unique api key</comment>
+                </field>               
+            </group>
+			<group id="acs2" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>GENIKI</label>
+               <field id="company_id" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Id</label>
+					<comment>E.g. :123456</comment>
+                </field>
+				
+				<field id="company_pass" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Company Password</label>
+					<comment>E.g. : 456789m</comment>
+                </field>
+                <field id="user_id" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>User Id</label>
+					<comment>E.g. : 456789m</comment>
+                </field>
+                <field id="user_pass" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>User Password</label>
+					<comment>E.g. : ******</comment>
+                </field>
+
+				<field id="bill_code" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Billing Code</label>
+					<comment>only add code no text</comment>
+                </field>
+				<field id="api_key" translate="label comment" type="text" sortOrder="0"  showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Key</label>
+					<comment>unique api key</comment>
+                </field>   
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,466 @@
+<?php
+   /**
+    * @var $block \Rbj\OrderTab\Block\Adminhtml\OrderEdit\Tab\View
+    */
+    $order = $block->getOrder();
+
+    $customerUrl = $block->getCustomerViewUrl(); 
+    $shipping_address = $order->getShippingAddress();   
+    $shippingStrret = $shipping_address->getStreet();
+    $payment = $order->getPayment(); 
+    $pay = $payment->getMethod();    
+    $helper = $this->helper('NG\Acs\Helper\Data'); 
+    $sss = trim($block->getOrderIncrementId());    
+    $objectManager =   \Magento\Framework\App\ObjectManager::getInstance();
+    $connection = $objectManager->get('Magento\Framework\App\ResourceConnection')->getConnection('\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION');  
+    $result1 = $connection->fetchAll("SELECT * FROM `acs_shipping_module` where order_id=".$block->getOrderIncrementId());
+
+    $model1 = $objectManager->create('NG\Acs\Model\Post')->getCollection()->addFieldToFilter('order_id',$sss); 
+    $data =  $result1; 
+    $shipments = $order->getShipmentsCollection();
+    $data_paramter = count($data) > 0  ? $data[0] : [];
+    $falg = 0;
+    $addition=[];
+    if( @$data_paramter['id']){    
+        $orderAsc = json_decode($data_paramter['pass_parameter']);
+        $orderAsc = $orderAsc->ACSInputParameters;
+        $retunJson =  json_decode($data_paramter['form_json']);
+        $retunJson =  $retunJson->ACSOutputResponce;
+        $falg = 1;
+
+        
+        $addition = @$orderAsc->Acs_Delivery_Products_set;
+        if(!is_array( $addition)){
+             $addition[0]='pp';
+        }
+        // echo '<pre>'; print_r($orderAsc->Acs_Delivery_Products_set); 
+        // echo '<pre>'; print_r($retunJson);
+    }    
+    // echo '<pre>'; var_dump($shipments->getData()); 
+     $shippingId = $shipments->getData();
+     $s_id = empty(!$shippingId) ? ($shippingId[0]['increment_id']) : 1 ;
+   ?> 
+    <style>
+        input,
+        select,
+        textarea {
+            width: 100%;
+            height: 39px;
+            border: 1px solid #ccc;
+            padding: 0 15px;
+        }
+        
+        .primary button {
+            font-size: 16px;
+        }
+        
+        td.twoflex,
+        div.twoflex {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        div.twoflex {
+            text-align: left;
+        }
+        
+        div.twoflex .admin__field~.admin__field-option:last-child {
+            margin: 0;
+        }
+        
+        .twoflex div.flex {
+            position: relative;
+        }
+        
+        td.twoflex input,
+        td.twoflex select,
+        .twoflex div.flex {
+            width: 46%;
+            justify-content: space-between;
+        }
+        
+        select:disabled {
+            opacity: 0.5
+        }
+        .info{
+            font-size: 12px;
+            text-align: left;
+        }
+        .order-view-account-information-ttile{     font-weight: 900 !important; 
+    color: #e20e0e !important; }
+    </style>
+
+    <form class="form form-orders-voucher" id="acs-widget-orders-and-returns-form" data-mage-init='{"NG_Acs/js/acs":{"action" : "<?= $block->getBaseUrl().'acs/index/' ?>"}, "validation":{}}' action="<?= $block->escapeUrl($block->getActionUrl()) ?>"
+        method="post" name="guest_post">
+        <input type="hidden" name="ship_id" value="<?=  $s_id ?>" />
+        <div class="actions-toolbar page-actions-buttons">
+            <div class="primary">
+               <?php if($falg > 0 ){?>
+                    <button type="button" title="<?= $block->escapeHtmlAttr(__('Delete')) ?>" data-voucher="<?= $retunJson->ACSValueOutput[0]->Voucher_No?>" data-id="<?= $data_paramter['id']; ?>" class="action  primary delete_voucher" id="acs-widget-delete" >
+                        <span><?= $block->escapeHtml(__('Delete')) ?></span>
+                    </button>
+               <?php }else{ ?>
+                 <button type="button" title="<?= $block->escapeHtmlAttr(__('Continue')) ?>" class="action submit primary" id="acs-widget-orders">
+                      <span><?= $block->escapeHtml(__('Create Voucher')) ?></span>
+                    </button>
+                <?php }?>
+                <button type="reset" title="<?= $block->escapeHtmlAttr(__('reset')) ?>" class="action  primary">
+                  <span><?= $block->escapeHtml(__('Reset')) ?></span>
+               </button>
+            </div>
+        </div>
+        <?php if($falg > 0 ){?>
+            <section class="admin__page-section order-view-account-information">
+                <div class="admin__page-section-title">
+                    <span class="title order-view-account-information-ttile">WARNING!!! Voucher Already Printed :- </span>
+                    <strong class="order-view-account-information-ttile"><?= $retunJson->ACSValueOutput[0]->Voucher_No ?></strong>                
+                </div>
+            </section>
+        <?php } ?>        
+        
+        <section class="admin__page-section order-view-account-information">
+            <div class="admin__page-section-title">
+                <span class="title">Order &amp; ACS Create Voucher Information</span>
+            </div>
+            <div class="admin__page-section-content">
+                <div class="admin__page-section-item order-information">
+                    <div class="admin__page-section-item-title">
+                        <span class="title">
+                              Customer (Receiver) Information
+                           </span>
+                    </div>
+                    <div class="admin__page-section-item-content">
+                        <table class="admin__table-secondary order-information-table">
+                            <tbody>
+                                <tr>
+                                    <th>
+                                        <?=  $block->escapeHtml(__('Recipient Name')) ?>
+                                    </th>
+                                    <td><input type="text" name="Recipient_Name" id="Recipi" placeholder="Recipient Name" data-validate="{required:true}" value="<?= $block->escapeHtml($falg > 0 ? $orderAsc->Recipient_Name  : $order->getCustomerName()) ?>"
+                                        /></td>
+                                </tr>
+                                <tr>
+                                    <th>Company Name</th>
+                                    <td><input type="text" name="Recipient_Company_Name" id="compnay_name" placeholder="Company Name" value="<?= $block->escapeHtml($falg > 0 ? $orderAsc->Recipient_Company_Name  : $shipping_address->getCompany()) ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Address</th>
+                                    <td><input type="text" name="Recipient_Address" id="street" placeholder="Address" data-validate="{required:true}" value="<?= $falg > 0 ? $orderAsc->Recipient_Address  : implode(',',$shippingStrret); ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Street Number</th>
+                                    <td class="twoflex"><input data-validate="{required:true}" type="text" name="Recipient_Address_Number" id="number" placeholder=" Streetnumber" value="<?=   $falg > 0 ? $orderAsc->Recipient_Address_Number  : '.' ?>" /><input type="text"
+                                            name="Recipient_Floor" id="floor" placeholder="floor" value="<?= $falg > 0 ? $orderAsc->Recipient_Floor  : @$shippingStrret['1'] ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>City</th>
+                                    <td><input type="text" name="area" id="city" placeholder="City" data-validate="{required:true}" value="<?=  $falg > 0 ? $orderAsc->area  :  $shipping_address->getCity(); ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Zip code</th>
+                                    <td><input type="text" name="Recipient_Zipcode" id="zip" placeholder="Enter a Valid ZipCode" data-validate="{required:true}" value="<?=   $falg > 0 ? $orderAsc->Recipient_Zipcode  : $shipping_address->getPostcode() ?>"
+                                        /></td>
+                                </tr>
+                                <tr>
+                                    <th>Country</th>
+                                    <td><input type="text" name="Recipient_Country" id="country" placeholder="Country" data-validate="{required:true}" value="<?=  $falg > 0 ? $orderAsc->Recipient_Country  :  $order->getShippingAddress()->getCountryId(); ?>"
+                                        /></td>
+                                </tr>
+                                <tr>
+                                    <th>Phone</th>
+                                    <td class="twoflex"><input type="text" name="Recipient_Phone" id="phone" placeholder="Phone" data-validate="{'validate-custom-phone':true ,'validate-custom-phoneformate':true}" value="<?=  $falg > 0 ? $orderAsc->Recipient_Phone  : $order->getBillingAddress()->getTelephone()?>"
+                                        /><input type="text" name="Recipient_Cell_Phone" id="mobile" placeholder="Mobile Number" value="<?=  $falg > 0 ? $orderAsc->Recipient_Cell_Phone : ''  ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Customer Email</th>
+                                    <td><input type="text" name="Recipient_Email" id="email" placeholder="Enter Customer email" value="<?= $falg > 0 ? $orderAsc->Recipient_Email :  $block->escapeHtmlAttr($order->getCustomerEmail()) ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th><b style="color:red">ORDER NOTES</b></th>
+                                    <td><textarea name="Delivery_Notes" placeholder="Enter shipping notes" value="<?=  $falg > 0 ? $orderAsc->Delivery_Notes : ''  ?>"></textarea></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="admin__page-section-item order-account-information">
+                    <div class="admin__page-section-item-title">
+                        <span class="title">Payment & Shipping Information </span>
+                        <div class="actions">
+                        </div>
+                    </div>
+                    <div class="admin__page-section-item-content">
+                        <table class="admin__table-secondary order-information-table">
+                            <tbody>
+                                <tr>
+                                    <th>Sender</th>
+                                    <td class="twoflex"><input type="text" name="Sender" id="sender" placeholder="Sender" data-validate="{required:true}" value="<?=  $falg > 0 ? $orderAsc->Sender :  $helper->getGeneralConfig('company_name') ?>" />
+                                        <input type="text" name="Billing_Code" id="acscode" placeholder="Acs Code" readonly value="<?= $helper->getGeneralConfig('bill_code') ?>" />
+                                        <input type="hidden" name="Company_ID" value="<?= $helper->getGeneralConfig('company_id') ?>" />
+                                        <input type="hidden" name="Company_Password" value="<?= $helper->getGeneralConfig('company_pass') ?>" />
+                                        <input type="hidden" name="User_ID" value="<?= $helper->getGeneralConfig('user_id') ?>" />
+                                        <input type="hidden" name="User_Password" value="<?= $helper->getGeneralConfig('user_pass') ?>" />
+                                        <input type="hidden" name="api_key" value="<?= $helper->getGeneralConfig('api_key') ?>" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th> Shipping Paid By</th>
+                                    <td>                                 
+                                        <select name="Charge_Type"> 
+                                            <option value="2" <?php  if($falg > 0 && $orderAsc->Charge_Type == '2'){ echo 'selected'; }   ?> >Sender</option> 
+                                            <option value="4" <?php  if($falg > 0 && $orderAsc->Charge_Type == '4'){ echo 'selected'; }   ?>>Receiver</option>  </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Center Cost</th>
+                                    <td><select data-validate="{required:true}" name="Cost_Center_Code" id="costcenter"> 
+                                        <option value="1" <?php  if($falg > 0 && $orderAsc->Cost_Center_Code == '1'){ echo 'selected'; }  ?>  >simple Shipping</option>  
+                                        <option value="02" <?php
+                                                if($falg > 0 && $orderAsc->Cost_Center_Code == '02'){ echo 'selected'; }
+                                                elseif($order->getBaseGrandTotal()  > 0 && $pay == 'cashondelivery'){ echo  "selected";  }
+                                                ?> >Shipping with cash on delivery</option> 
+                                       <option value="03"  <?php
+                                                if($falg > 0 && $orderAsc->Cost_Center_Code == '03'){ echo 'selected'; } ?> >Shipping with documents return</option>   
+                                       <option value="04"  <?php
+                                                if($falg > 0 && $orderAsc->Cost_Center_Code == '04'){ echo 'selected'; } ?>>Shipping with documents return and cash on delivery </option> </select></td>
+                                </tr>
+                                <tr>
+                                    <th>PickUp Date</th>
+                                    <td><input type="date" name="Pickup_Date" id="pickdate" placeholder="Enter pickup date" data-validate="{required:true}"  value="<?=  $falg > 0 ? $orderAsc->Pickup_Date :  date('Y-m-d'); ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>COD Amount</th>
+                                    <td>
+                                        <div class="twoflex" >
+                                            <?php 
+                                                $amount =   ($pay  == 'cashondelivery') ?  number_format($order->getBaseGrandTotal(), 2) : 0;
+                                                if($falg > 0){
+                                                    $amount = $orderAsc->Cod_Ammount;
+                                                }
+                                            ?>                                      
+                                            <input type="text" name="Cod_Ammount" id="amount" placeholder="0.00€" data-validate="{required:true}" 
+                                                value="<?= $amount ?>" />                                          
+                                            
+                                            <select name="Cod_Payment_Way" id="codcenter" <?= $pay !=='cashondelivery' ? 'disabled' : '' ?>>
+                                                <option value="0" checked="true" <?= $pay == 'cashondelivery' ? "selected" : "" ?>  >cash</option>
+                                                <option value="1" <?php
+                                                    if($falg > 0 && $orderAsc->Cost_Center_Code == '03'){ echo 'selected'; } ?> >Check</option>
+                                            </select>
+                                        </div>
+                                        <p class="info">Payment type :<?= $pay;?></p>
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                    <th><b style="color:red">ADDITIONAL SERVICES</b></th>
+                                    <td>    
+                                        <?php 
+                                            
+                                        ?>
+                                        <div class="admin__field" id="additional_serv">
+                                            <div class="order-history-comments-options">
+                                                <div class="twoflex">
+                                                    <div class="admin__field admin__field-option flex">
+                                                        <input type="checkbox" class="admin__control-checkbox" name="Acs_Delivery_Products[0]" id="Acs_Delivery_Products_COD" placeholder="Code Beneficiary" value="COD" <?= $pay=='cashondelivery' || in_array("COD", $addition) ? 'checked' : '' ?>                                                        />
+                                                        <label class="admin__field-label"><?= $block->escapeHtml(__('COD*')) ?> </label>
+                                                    </div>
+                                                    <div class="admin__field admin__field-option flex">
+                                                        <input type="checkbox" class="admin__control-checkbox" name="Acs_Delivery_Products[1]" id="Acs_Delivery_Products_RDO" placeholder="Code Beneficiary" value="RDO" <?= in_array("RDO", $addition) ? 'checked' : '' ?> />
+                                                        <label class="admin__field-label"><?= $block->escapeHtml(__('Return Documents')) ?></label>
+                                                    </div>
+                                                </div>
+                                                <div class="twoflex">
+                                                    <div class="admin__field admin__field-option flex">
+                                                        <input type="checkbox" class="admin__control-checkbox" name="Acs_Delivery_Products[2]" id="Acs_Delivery_Products_SAT" placeholder="Delivery Saturday *" value="SAT" <?= in_array("SAT", $addition) ? 'checked' : '' ?> />
+                                                        <label class="admin__field-label"><?= $block->escapeHtml(__('Delivery Saturday *')) ?></label>
+                                                    </div>
+                                                    <div class="admin__field admin__field-option flex">
+                                                        <input type="checkbox" class="admin__control-checkbox" name="Acs_Delivery_Products[3]" id="Acs_Delivery_Products_REC" placeholder="Code Beneficiary" value="REC" <?= in_array("REC", $addition) ? 'checked' : '' ?> />
+                                                        <label class="admin__field-label"><?= $block->escapeHtml(__(' Reception pick up')) ?></label>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Code Beneficiary</th>
+                                    <td><input type="text" name="code_benf" id="code_benf" placeholder="Code Beneficiary"
+                                     value="<?php if($falg > 0 ){ echo $orderAsc->code_benf; }else if( $pay == 'cashondelivery'){ echo  $helper->getGeneralConfig('bill_code'); } ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Relevant 1</th>
+                                    <td><input type="text" name="Reference_Key1" id="relevant1" placeholder="Relevant 1" value="<?= $falg > 0 ? $orderAsc->Reference_Key1 : '' ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Relevant 2</th>
+                                    <td><input type="text" name="Reference_Key2" id="relevant2" placeholder="Relevant 2"   value="<?= $falg > 0 ? $orderAsc->Reference_Key2 : '' ?>"  /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="admin__page-section order-view-account-information">
+            <div class="admin__page-section-content">
+                <div class="admin__page-section-item order-information">
+                    <div class="admin__page-section-item-title">
+                        <span class="title">product Information</span>
+                    </div>
+                    <div class="admin__page-section-item-content">
+                        <table class="admin__table-secondary order-account-information-table">
+                            <tbody>
+                                <tr>
+                                    <th>Shipping Media</th>
+                                    <td><select name="envelope">
+                                        <option value="envelope" >Envelope</option>
+                                        <option value="box">Box</option>
+                                        <option value="othe">Othe</option></select></td>
+                                </tr>
+                                <tr>
+                                    <th>Quantity</th>
+                                    <td><input type="number" name="Item_Quantity" id="qty" placeholder="Quantity" data-validate="{required:true}" step="1" min="1" value="<?= $falg > 0 ? $orderAsc->Item_Quantity : "1"?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Weight</th>customer_id
+                                    <td><input type="hidden" name="order_id" value=" <?php echo $block->getOrderIncrementId(); ?>" /><input type="hidden" name="customer_id" value=" <?php echo $block->getCustomerId(); ?>" /> <input type="number" name="Weight"
+                                            id="weight" placeholder="weight" min="0.50" step="0.50" value="<?= $falg > 0 ? $orderAsc->Weight : '0.50' ?>"    /></td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="admin__page-section-item order-account-information">
+                    <div class="admin__page-section-item-title">
+                        <span class="title"> Order Information </span>
+                    </div>
+                    <div class="admin__page-section-item-content">
+                        <table class="admin__table-secondary">
+                            <tbody>
+                                <tr>
+                                    <th>Dimension_X_In_Cm</th>
+                                    <td><input type="text" name="Dimension_X_In_Cm" id="Dimension_X_In_Cm" placeholder="Dimension_X_In_Cm" value="<?= $falg > 0 ? $orderAsc->Dimension_X_In_Cm : '' ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Dimension_Y_in_Cm</th>
+                                    <td><input type="text" name="Dimension_Y_in_Cm" id="Dimension_Y_in_Cm" placeholder="Dimension_Y_in_Cm"  value="<?= $falg > 0 ? $orderAsc->Dimension_Y_in_Cm : '' ?>" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Dimension_Z_in_Cm</th>
+                                    <td><input type="text" name="Dimension_Z_in_Cm" id="Dimension_Z_in_Cm" placeholder="Dimension_Z_in_Cm"  value="<?= $falg > 0 ? $orderAsc->Dimension_Z_in_Cm : '' ?>"  /></td>
+                                </tr>
+                                <?php echo $block->getChildHtml(); ?>
+                                <tr>
+                                    <th>
+                                        <?php /* @escapeNotVerified */   echo __('Order ID:') ?>
+                                    </th>
+                                    <td>
+                                        <?php echo $block->getOrderIncrementId(); ?>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+
+    <script type="text/javascript">
+        require([
+            'jquery', // jquery Library
+            'jquery/ui', // Jquery UI Library
+            'jquery/validate', // Jquery Validation Library
+            'mage/translate' //      
+        ], function($) {
+
+            $.validator.addMethod(
+                'validate-custom-phone',
+                function(value) {
+                    if (value === '' && $('#mobile').val() == '') {
+                        return false;
+                    } else {
+                        return true;
+                    } // Validation logic here
+                }, $.mage.__('Enter phone number or mobile number.'));
+
+            $.validator.addMethod(
+                'validate-custom-zip',
+                function(value) {
+                    return utils.isEmptyNoTrim(value) || /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(value);
+
+                },
+                $.mage.__('Please enter a valid zip code (Ex: 12345).'));
+            $.validator.addMethod(
+                'validate-custom-phoneformate',
+                function(value) {
+                    return value.length > 9 &&
+                        value.match(/^(\(?(0|\+30)[1-9]{1}\d{1,4}?\)?\s?\d{3,4}\s?\d{3,4})$/)
+
+                },
+                $.mage.__('Please add the country code +30  (e.g: +30xxxxxxxx).'));
+
+            var totalamount = $('#amount').val();
+           
+            $(document).on('blur', '#amount', function() {
+                var value = $(this).val();
+                if (isNaN(value)) {
+                    $(this).val('');
+                } else if (!value) {
+                    return;
+                } else {
+                    value = parseFloat(value).toFixed(2);
+                    $(this).val(value);
+                }
+            });
+
+
+            $(document).on('input', '#amount', function(e) {
+                if ($(this).val() > 0) {
+                    $('#codcenter').attr('disabled', false);
+                    $('#Acs_Delivery_Products_COD').prop('checked', true);
+                    $("#costcenter").val("02");
+                    console.log( $("#costcenter"));
+                    $('#code_benf').val($('#acscode').val());
+                } else {
+                    $('#codcenter').attr('disabled', true);
+                    $('#Acs_Delivery_Products_COD').prop('checked', false);
+                    $("#costcenter").val("1");
+                    $('#code_benf').val('');
+                }
+            })
+
+            $('body').on("click", '#additional_serv input', function(e) {
+                var ids = [];
+                var falg = '';
+                if (!$('#Acs_Delivery_Products_COD:checked').length) {
+                    $('#amount').val(0);
+                    $('#code_benf').val('');
+                }
+                $('#additional_serv input[type=checkbox]:checked').each(function() {
+                    if ($(this).val() == 'RDO')
+                        $("#costcenter").val("03");
+                    else if ($(this).val() == 'COD') {
+                        $("#costcenter").val("02");
+                        $('#code_benf').val($('#acscode').val());
+                        $('#amount').val(totalamount);
+                    }
+                    ids.push(ids);
+                });
+                if ($('#Acs_Delivery_Products_COD:checked').length && $('#Acs_Delivery_Products_RDO:checked').length) {
+                    $("#costcenter").val("04");
+                } else if (!$('#Acs_Delivery_Products_COD:checked').length && !$('#Acs_Delivery_Products_RDO:checked').length) {
+                    $('#amount').val(0);
+                    $("#costcenter").val("1");
+                    console.log('popopo');
+                }
+
+            })
+
+        });
+    </script>

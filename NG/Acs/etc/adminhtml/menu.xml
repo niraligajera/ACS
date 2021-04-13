@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magestore
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Magestore.com license that is
+ * available through the world-wide-web at this URL:
+ * http://www.magestore.com/license-agreement.html
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Magestore
+ * @package     Magestore_Bannerslider
+ * @copyright   Copyright (c) 2012 Magestore (http://www.magestore.com/)
+ * @license     http://www.magestore.com/license-agreement.html
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    	
+
+		<add id="NG_Acs::voucher_list" title="Manage Courier" module="NG_Acs" sortOrder="910" parent="Magento_Sales::sales_operation" action="acs/acsstaff/index" resource="NG_Acs::voucher_list"/>
+		<add id="NG_Acs::voucher_pickup" title="ACS pickup History" module="NG_Acs" sortOrder="911" parent="Magento_Sales::sales_operation" action="acs/postpickup/index" resource="NG_Acs::voucher_list"/>
+
+        <!-- <add id="NG_Acs::AcsHistory" title="Acs voucher history" module="NG_Acs" sortOrder="910" parent="Magento_Sales::sales_operation" action="bannerslideradmin/" resource="NG_Acs::AcsHistory"/> -->
+
+    </menu>
+</config>

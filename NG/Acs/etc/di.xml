@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Mage-World
+  ~
+  ~  @category    Mage-World
+  ~  @package     MW
+  ~  @author      Mage-world Developer
+  ~ /app/code/NG/Acs/Model/ResourceModel
+  ~  @copyright   Copyright (c) 2018 Mage-World (https://www.mage-world.com/)
+  -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+   <!--   <type name="Magento\Checkout\Block\Onepage">
+        <plugin name="checkout_modification" type="NG\Acs\Plugin\AfterJsConfig"/>
+    </type> -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="ng_acs_post_listing_data_source" xsi:type="string">NG\Acs\Model\ResourceModel\Post\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="NG\Acs\Model\ResourceModel\Post\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">acs_shipping_module</argument>
+            <argument name="resourceModel" xsi:type="string">NG\Acs\Model\ResourceModel\Post</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Catalog\Ui\DataProvider\Product\ProductDataProvider"> 
+        <arguments> 
+            <argument name="addFieldStrategies" xsi:type="array"> 
+                <item name="custom_column" xsi:type="object">NG\Acs\Ui\DataProvider\Product\CustomColumnFieldpick</item> 
+            </argument> 
+            <argument name="addFilterStrategies" xsi:type="array"> 
+                <item name="custom_column" xsi:type="object">NG\Acs\Ui\DataProvider\Product\CustomColumnFilter</item> 
+            </argument> 
+        </arguments>
+    </type>
+
+
+    
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="ng_acs_postpick_listing_data_source" xsi:type="string">NG\Acs\Model\ResourceModel\Postpickup\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="NG\Acs\Model\ResourceModel\Postpickup\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">acs_shipping_pickup_module</argument>
+            <argument name="resourceModel" xsi:type="string">NG\Acs\Model\ResourceModel\Postpickup</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Catalog\Ui\DataProvider\Product\ProductDataProvider"> 
+        <arguments> 
+            <argument name="addFieldStrategies" xsi:type="array"> 
+                <item name="custom_column" xsi:type="object">NG\Acs\Ui\DataProvider\Product\CustomColumnFieldpick</item> 
+            </argument> 
+            <argument name="addFilterStrategies" xsi:type="array"> 
+                <item name="custom_column" xsi:type="object">NG\Acs\Ui\DataProvider\Product\CustomColumnFilterpick</item> 
+            </argument> 
+        </arguments>
+    </type>
+    <type name="Magento\Checkout\Block\Onepage">
+        <plugin name="checkout_modification" type="NG\Acs\Plugin\AfterJsConfig"/>
+    </type>
+   <!--  <virtualType name="Magento\Sales\Model\ResourceModel\Order\Grid" type="Magento\Sales\Model\ResourceModel\Grid">
+        <arguments>
+            <argument name="columns" xsi:type="array">
+                <item name="voucher" xsi:type="string">sales_order.voucher</item>
+            </argument>
+        </arguments>
+    </virtualType> -->
+    <!-- <type name="NG\Acs\Ui\Component\MassAction\Status\Options">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="urlPath" xsi:type="string">giftcard/giftuser/changestatus</item>
+                <item name="paramName" xsi:type="string">entity_id</item>
+                <item name="confirm" xsi:type="array">
+                    <item name="title" xsi:type="string" translatable="true">Change Status</item>
+                    <item name="message" xsi:type="string" translatable="true">Are you sure?</item>
+                </item>
+            </argument>
+        </arguments>
+    </type> -->
+
+    <virtualType name="Magento\Sales\Model\ResourceModel\Order\Grid" type="Magento\Sales\Model\ResourceModel\Grid">
+        <arguments>
+            <argument name="columns" xsi:type="array">
+                <item name="order_notes" xsi:type="string">sales_order.order_notes</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    
+</config>
